@@ -18,6 +18,12 @@ class Customer {
 
   /** find all customers. */
 
+  // NOTE: for translating psql vs JS style
+  // AS firstName --> firstname
+  // AS "firstName" --> firstName ('literally')
+  // AS first Name XXX illegal
+  // --> AS "first Name" legal
+
   static async all() {
     const results = await db.query(
       `SELECT id,
@@ -115,6 +121,8 @@ class Customer {
   /** Get top 10 customers ordered by most reservations.
    *  Returns a two-member array, at idx=0 Customer instance, at idx=1 Reservations Count!
    */
+
+  //TODO: give an example in docstring -- easier and better than explaining, is SHOWING!
 
   static async getTopCustomersAndCounts() {
     const results = await db.query(`

@@ -4,14 +4,14 @@
 
 
 <h1>Top 10 Customers</h1>
-
+<!-- // TODO: destructure the two things! -->
 <ol style="column-count: 4">
-  {% for customerAndCount in customersAndCounts %}
+  {% for customer, count in customersAndCounts %}
   <li>
-    <a href="/{{ customerAndCount[0].id }}/">
-      {{ customerAndCount[0].getFullName() }}
+    <a href="/{{ customer.id }}/">
+      {{ customer.getFullName() }}
     </a>
-    , Reservations: {{ customerAndCount[1] }}
+    , Reservations: {{ count }}
   </li>
   {% endfor %}
 </ol>

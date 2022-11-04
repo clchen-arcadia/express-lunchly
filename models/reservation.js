@@ -41,6 +41,8 @@ class Reservation {
   }
 
   /** save this reservation. */
+  //NOTE: style. "id=1" is SETTING
+  // "id = 1" is CHECKING. strong CONVENTION
 
   async save() {
     if (this.id === undefined) {
@@ -63,6 +65,7 @@ class Reservation {
       );
     }
   }
+
 }
 
 module.exports = Reservation;
