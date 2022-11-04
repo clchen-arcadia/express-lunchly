@@ -5,14 +5,15 @@
 
 <h1>Top 10 Customers</h1>
 
-<ul style="column-count: 4">
-  {% for customer in customers %}
+<ol style="column-count: 4">
+  {% for customerAndCount in customersAndCounts %}
   <li>
-    <a href="/{{ customer.id }}/">
-      {{ customer.getFullName() }}
+    <a href="/{{ customerAndCount[0].id }}/">
+      {{ customerAndCount[0].getFullName() }}
     </a>
+    , Reservations: {{ customerAndCount[1] }}
   </li>
   {% endfor %}
-</ul>
+</ol>
 
 {% endblock %}

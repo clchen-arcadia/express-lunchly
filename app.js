@@ -17,6 +17,8 @@ nunjucks.configure("templates", {
   express: app,
 });
 
+//Routes
+
 app.use(routes);
 
 /** 404 handler: matches unmatched routes; raises NotFoundError. */

@@ -31,7 +31,7 @@ class Customer {
     return results.rows.map((c) => new Customer(c));
   }
 
-  /** filter customers by first or last name, using query */
+  /** filter search customers by first or last name, using query */
 
   static async search(query) {
     const results = await db.query(
@@ -46,7 +46,7 @@ class Customer {
             OR c.last_name ILIKE $1
             OR CONCAT(c.first_name, ' ', c.last_name) ILIKE $1
            ORDER BY last_name, first_name`,
-      [query]
+      ['%' + query + '%']
     );
     return results.rows.map((c) => new Customer(c));
   }
@@ -112,23 +112,27 @@ class Customer {
     }
   }
 
-  /** Get top 10 customers ordered by most reservations. */
+  /** Get top 10 customers ordered by most reservations.
+   *  Returns a two-member array, at idx=0 Customer instance, at idx=1 Reservations Count!
+   */
 
-  static async getTop10Customers() {
+  static async getTopCustomersAndCounts() {
     const results = await db.query(`
-      SELECT  id,
-              first_name AS "firstName",
-              last_name  AS "lastName",
-              phone,
-              notes
+      SELECT  c.id,
+              c.first_name AS "firstName",
+              c.last_name  AS "lastName",
+              c.phone,
+              c.notes,
+              COUNT(r.id) AS "reservationsCount"
       FROM customers AS c
       JOIN reservations AS r
       ON c.id = r.customer_id
       GROUP BY c.id
-      ORDER BY COUNT(r.id)
+      ORDER BY COUNT(r.id) DESC
       LIMIT 10
     `);
-    return results.rows;
+
+    return results.rows.map((c) => ([new Customer(c), c.reservationsCount]));
   }
 }
 
