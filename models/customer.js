@@ -153,7 +153,7 @@ class Customer {
      if (Boolean(val) === false) {
       this._notes = "";
     }
-    else if (typeof val !== String) {
+    else if (typeof val !== "string") {
       throw new BadRequestError("Input must be a string!");
     }
     else {

@@ -49,7 +49,8 @@ class Reservation {
                   start_at AS "startAt",
                   notes AS "notes"
            FROM reservations
-           WHERE customer_id = $1`,
+           WHERE customer_id = $1
+           ORDER BY start_at`,
       [customerId]
     );
 
@@ -83,7 +84,7 @@ class Reservation {
     if (Boolean(val) === false) {
       this._notes = "";
       }
-    else if (typeof val !== String) {
+    else if (typeof val !== "string") {
       throw new BadRequestError("Input must be a string!");
     } else{
       this._notes = val;
