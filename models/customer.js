@@ -41,9 +41,9 @@ class Customer {
                   phone,
                   notes
            FROM customers AS c
-           WHERE 
-            c.first_name ILIKE $1 
-            OR c.last_name ILIKE $1 
+           WHERE
+            c.first_name ILIKE $1
+            OR c.last_name ILIKE $1
             OR CONCAT(c.first_name, ' ', c.last_name) ILIKE $1
            ORDER BY last_name, first_name`,
       [query]
@@ -116,7 +116,11 @@ class Customer {
 
   static async getTop10Customers() {
     const results = await db.query(`
-      SELECT 
+      SELECT  id,
+              first_name AS "firstName",
+              last_name  AS "lastName",
+              phone,
+              notes
       FROM customers AS c
       JOIN reservations AS r
       ON c.id = r.customer_id
