@@ -9,7 +9,7 @@
   {% for customer, count in customersAndCounts %}
   <li>
     <a href="/{{ customer.id }}/">
-      {{ customer.getFullName() }}
+      {{ customer.fullName }}
     </a>
     , Reservations: {{ count }}
   </li>

@@ -5,6 +5,7 @@
 const moment = require("moment");
 
 const db = require("../db");
+const { BadRequestError } = require("../expressError");
 
 /** A reservation for a party */
 
@@ -12,9 +13,9 @@ class Reservation {
   constructor({ id, customerId, numGuests, startAt, notes }) {
     this.id = id;
     this.customerId = customerId;
-    this.numGuests = numGuests;
+    this._numGuests = numGuests;
     this.startAt = startAt;
-    this.notes = notes;
+    this._notes = notes;
   }
 
   /** formatter for startAt */
@@ -38,6 +39,44 @@ class Reservation {
     );
 
     return results.rows.map((row) => new Reservation(row));
+  }
+
+  /** Set the number of guests.
+   * Accepts the number of guests.
+   * If have fewer than 1 guest, throw BadRequestError.
+   */
+  set numGuests(val) {
+    if (val < 1) {
+      throw new BadRequestError("Must have at least 1 guest!");
+    } else {
+      this._numGuests = val;
+    }
+  }
+
+  /** Get the number of guests. */
+  get numGuests() {
+    return this._numGuests;
+  }
+
+  /**
+   * Set the notes.
+   * Accepts a note: string.
+   * If invalid, set to empty string.
+   * Else, set the note.
+   */
+  set notes(val) {
+    if (typeof val !== String) {
+      throw new BadRequestError("Input must be a string!");
+    } else if (Boolean(val) === false) {
+      this._notes = "";
+    } else {
+      this._notes = val;
+    }
+  }
+
+  /** Get the notes. */
+  get notes() {
+    return this._notes;
   }
 
   /** save this reservation. */
@@ -65,7 +104,6 @@ class Reservation {
       );
     }
   }
-
 }
 
 module.exports = Reservation;

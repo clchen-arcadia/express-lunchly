@@ -45,7 +45,6 @@ router.post("/add/", async function (req, res, next) {
 /** Handle getting the top 10 customers sorted by reservation count */
 
 router.get("/top-ten/", async function (req, res) {
-
   const customersAndCounts = await Customer.getTopCustomersAndCounts();
   return res.render("customer_top_list.html", { customersAndCounts });
 });
@@ -80,7 +79,7 @@ router.post("/:id/edit/", async function (req, res, next) {
   customer.firstName = req.body.firstName;
   customer.lastName = req.body.lastName;
   customer.phone = req.body.phone;
-  customer.notes = req.body.notes;
+  customer.notes(req.body.notes);
   await customer.save();
 
   return res.redirect(`/${customer.id}/`);
@@ -107,7 +106,5 @@ router.post("/:id/add-reservation/", async function (req, res, next) {
 
   return res.redirect(`/${customerId}/`);
 });
-
-
 
 module.exports = router;

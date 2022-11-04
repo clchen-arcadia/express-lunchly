@@ -13,7 +13,7 @@ class Customer {
     this.firstName = firstName;
     this.lastName = lastName;
     this.phone = phone;
-    this.notes = notes;
+    this._notes = notes;
   }
 
   /** find all customers. */
@@ -52,7 +52,7 @@ class Customer {
             OR c.last_name ILIKE $1
             OR CONCAT(c.first_name, ' ', c.last_name) ILIKE $1
            ORDER BY last_name, first_name`,
-      ['%' + query + '%']
+      ["%" + query + "%"]
     );
     return results.rows.map((c) => new Customer(c));
   }
@@ -90,7 +90,7 @@ class Customer {
 
   /** get first and last name of customer in a string */
 
-  getFullName() {
+  get fullName() {
     return this.firstName + " " + this.lastName;
   }
 
@@ -140,7 +140,28 @@ class Customer {
       LIMIT 10
     `);
 
-    return results.rows.map((c) => ([new Customer(c), c.reservationsCount]));
+    return results.rows.map((c) => [new Customer(c), c.reservationsCount]);
+  }
+
+  /**
+   * Set the notes.
+   * Accepts a note: string.
+   * If invalid, set to empty string.
+   * Else, set the note.
+   */
+  set notes(val) {
+    if (typeof val !== String) {
+      throw new BadRequestError("Input must be a string!");
+    } else if (Boolean(val) === false) {
+      this._notes = "";
+    } else {
+      this._notes = val;
+    }
+  }
+
+  /** Get the notes. */
+  get notes() {
+    return this._notes;
   }
 }
 
