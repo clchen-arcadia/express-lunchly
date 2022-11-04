@@ -13,6 +13,12 @@ const router = new express.Router();
 /** Homepage: show list of customers. */
 
 router.get("/", async function (req, res, next) {
+  const { search } = req.query;
+  if (search !== undefined) {
+    const customers = await Customer.search(search);
+    return res.render("customer_list.html", { customers });
+  }
+
   const customers = await Customer.all();
   return res.render("customer_list.html", { customers });
 });
@@ -90,6 +96,13 @@ router.post("/:id/add-reservation/", async function (req, res, next) {
   await reservation.save();
 
   return res.redirect(`/${customerId}/`);
+});
+
+/** Handle getting the top 10 customers sorted by reservation count */
+router.get("/top-ten/", async function (req, res) {
+  return res.send("hello world");
+  const customers = await Customer.getTop10Customers();
+  return res.render("customer_top_list.html", { customers });
 });
 
 module.exports = router;

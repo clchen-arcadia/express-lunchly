@@ -20,29 +20,49 @@ class Customer {
 
   static async all() {
     const results = await db.query(
-          `SELECT id,
+      `SELECT id,
                   first_name AS "firstName",
                   last_name  AS "lastName",
                   phone,
                   notes
            FROM customers
-           ORDER BY last_name, first_name`,
+           ORDER BY last_name, first_name`
     );
-    return results.rows.map(c => new Customer(c));
+    return results.rows.map((c) => new Customer(c));
+  }
+
+  /** filter customers by first or last name, using query */
+
+  static async search(query) {
+    const results = await db.query(
+      `SELECT id,
+                  first_name AS "firstName",
+                  last_name  AS "lastName",
+                  phone,
+                  notes
+           FROM customers AS c
+           WHERE 
+            c.first_name ILIKE $1 
+            OR c.last_name ILIKE $1 
+            OR CONCAT(c.first_name, ' ', c.last_name) ILIKE $1
+           ORDER BY last_name, first_name`,
+      [query]
+    );
+    return results.rows.map((c) => new Customer(c));
   }
 
   /** get a customer by ID. */
 
   static async get(id) {
     const results = await db.query(
-          `SELECT id,
+      `SELECT id,
                   first_name AS "firstName",
                   last_name  AS "lastName",
                   phone,
                   notes
            FROM customers
            WHERE id = $1`,
-        [id],
+      [id]
     );
 
     const customer = results.rows[0];
@@ -65,7 +85,7 @@ class Customer {
   /** get first and last name of customer in a string */
 
   getFullName() {
-    return this.firstName + ' ' + this.lastName;
+    return this.firstName + " " + this.lastName;
   }
 
   /** save this customer. */
@@ -73,28 +93,38 @@ class Customer {
   async save() {
     if (this.id === undefined) {
       const result = await db.query(
-            `INSERT INTO customers (first_name, last_name, phone, notes)
+        `INSERT INTO customers (first_name, last_name, phone, notes)
              VALUES ($1, $2, $3, $4)
              RETURNING id`,
-          [this.firstName, this.lastName, this.phone, this.notes],
+        [this.firstName, this.lastName, this.phone, this.notes]
       );
       this.id = result.rows[0].id;
     } else {
       await db.query(
-            `UPDATE customers
+        `UPDATE customers
              SET first_name=$1,
                  last_name=$2,
                  phone=$3,
                  notes=$4
-             WHERE id = $5`, [
-            this.firstName,
-            this.lastName,
-            this.phone,
-            this.notes,
-            this.id,
-          ],
+             WHERE id = $5`,
+        [this.firstName, this.lastName, this.phone, this.notes, this.id]
       );
     }
+  }
+
+  /** Get top 10 customers ordered by most reservations. */
+
+  static async getTop10Customers() {
+    const results = await db.query(`
+      SELECT 
+      FROM customers AS c
+      JOIN reservations AS r
+      ON c.id = r.customer_id
+      GROUP BY c.id
+      ORDER BY COUNT(r.id)
+      LIMIT 10
+    `);
+    return results.rows;
   }
 }
 
