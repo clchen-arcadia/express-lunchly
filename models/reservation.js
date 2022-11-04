@@ -24,6 +24,21 @@ class Reservation {
     return moment(this.startAt).format("MMMM Do YYYY, h:mm a");
   }
 
+  /** get reservation by id */
+
+  static async getReservationById(id) {
+    const results = await db.query(`
+    SELECT id,
+    customer_id AS "customerId",
+    num_guests AS "numGuests",
+    start_at AS "startAt",
+    notes AS "notes"
+    FROM reservations
+    WHERE id = $1`,
+    [id]);
+    return new Reservation(results.rows[0]);
+  }
+
   /** given a customer id, find their reservations. */
 
   static async getReservationsForCustomer(customerId) {
@@ -65,11 +80,12 @@ class Reservation {
    * Else, set the note.
    */
   set notes(val) {
-    if (typeof val !== String) {
-      throw new BadRequestError("Input must be a string!");
-    } else if (Boolean(val) === false) {
+    if (Boolean(val) === false) {
       this._notes = "";
-    } else {
+      }
+    else if (typeof val !== String) {
+      throw new BadRequestError("Input must be a string!");
+    } else{
       this._notes = val;
     }
   }

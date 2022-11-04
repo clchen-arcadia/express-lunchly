@@ -150,11 +150,13 @@ class Customer {
    * Else, set the note.
    */
   set notes(val) {
-    if (typeof val !== String) {
-      throw new BadRequestError("Input must be a string!");
-    } else if (Boolean(val) === false) {
+     if (Boolean(val) === false) {
       this._notes = "";
-    } else {
+    }
+    else if (typeof val !== String) {
+      throw new BadRequestError("Input must be a string!");
+    }
+    else {
       this._notes = val;
     }
   }

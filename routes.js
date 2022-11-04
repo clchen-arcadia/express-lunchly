@@ -79,7 +79,7 @@ router.post("/:id/edit/", async function (req, res, next) {
   customer.firstName = req.body.firstName;
   customer.lastName = req.body.lastName;
   customer.phone = req.body.phone;
-  customer.notes(req.body.notes);
+  customer.notes = req.body.notes;
   await customer.save();
 
   return res.redirect(`/${customer.id}/`);
@@ -106,5 +106,33 @@ router.post("/:id/add-reservation/", async function (req, res, next) {
 
   return res.redirect(`/${customerId}/`);
 });
+
+// -------- ROUTES FOR RESERVATIONS "/reservations/" -------
+
+/** On GET: display form to edit a reservation
+ * On POST: handles submission to edit a reservation */
+router.route("/edit-reservation/:id")
+  .get(async function (req, res) {
+    const reservation = await Reservation.getReservationById(req.params.id);
+    return res.render("reservation_edit_form.html", {reservation});
+})
+  .post(async function (req, res) {
+    if (req.body === undefined) {
+      throw new BadRequestError();
+    }
+    const reservation = await Reservation.getReservationById(req.params.id);
+    reservation.numGuests = req.body.numGuests;
+    reservation.startAt = new Date(req.body.startAt);
+    reservation.notes = req.body.notes;
+    await reservation.save();
+
+    return res.redirect(`/${reservation.customerId}/`);
+})
+
+
+
+
+
+
 
 module.exports = router;
