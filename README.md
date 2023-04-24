@@ -8,9 +8,9 @@ Install required node modules:
 
     npm install
 
-Start server with nodemon
+Then start server with nodemon
 
-Visit http://localhost:3000
+Then visit `http://localhost:3000`
 
 ## Screenshots
 
